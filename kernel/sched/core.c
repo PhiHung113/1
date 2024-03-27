@@ -13,6 +13,7 @@
 #include <linux/wait_bit.h>
 #include <linux/cpuset.h>
 #include <linux/delayacct.h>
+#include <linux/delay.h>
 #include <linux/init_task.h>
 #include <linux/context_tracking.h>
 #include <linux/rcupdate_wait.h>
