@@ -25,7 +25,6 @@
 #include <gpex_clboost.h>
 
 #include "gpex_clock_internal.h"
-#include <linux/exynos-ucc.h>
 
 static struct _clock_info *clk_info;
 
@@ -338,16 +337,13 @@ GPEX_STATIC ssize_t set_mm_min_lock_dvfs(const char *buf, size_t count)
 	int ret, clock = 0;
 
 	if (sysfs_streq("0", buf)) {
-		clk_info->user_min_lock_input = 0;
-		gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
+		gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, MM_LOCK, 0);
 	} else {
 		ret = kstrtoint(buf, 0, &clock);
 		if (ret) {
 			GPU_LOG(MALI_EXYNOS_WARNING, "%s: invalid value\n", __func__);
 			return -ENOENT;
 		}
-
-		clk_info->user_min_lock_input = clock;
 
 		clock = gpex_get_valid_gpu_clock(clock, true);
 
@@ -365,9 +361,9 @@ GPEX_STATIC ssize_t set_mm_min_lock_dvfs(const char *buf, size_t count)
 		gpex_clboost_set_state(CLBOOST_DISABLE);
 
 		if (clock == gpex_clock_get_min_clock())
-			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, SYSFS_LOCK, 0);
+			gpex_clock_lock_clock(GPU_CLOCK_MIN_UNLOCK, MM_LOCK, 0);
 		else
-			gpex_clock_lock_clock(GPU_CLOCK_MIN_LOCK, SYSFS_LOCK, clock);
+			gpex_clock_lock_clock(GPU_CLOCK_MIN_LOCK, MM_LOCK, clock);
 	}
 
 	return count;
@@ -483,25 +479,6 @@ GPEX_STATIC ssize_t show_gpu_freq_table(char *buf)
 }
 CREATE_SYSFS_KOBJECT_READ_FUNCTION(show_gpu_freq_table)
 
-GPEX_STATIC ssize_t set_gpu_freq_table(const char *buf, size_t count)
-{
-	int id = 10; /* dvfs_g3d */
-	unsigned int rate, volt;
-
-	if (sscanf(buf, "%u %u", &rate, &volt) == 2) {
-		if ((volt < 450000) || (volt > 1000000))
-			goto err;
-		update_fvmap(id, rate, volt);
-		gpex_clock_update_config_data_from_dt();
-		pr_info("%s: updated DVFS: dvfs_g3d - rate: %u kHz - volt: %u uV\n", __func__, rate, volt);
-		return count;
-	}
-
-err:
-	return -EINVAL;
-}
-CREATE_SYSFS_KOBJECT_WRITE_FUNCTION(set_gpu_freq_table)
-
 int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 {
 	clk_info = _clk_info;
@@ -521,8 +498,7 @@ int gpex_clock_sysfs_init(struct _clock_info *_clk_info)
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_mm_min_clock, show_mm_min_lock_dvfs,
 					  set_mm_min_lock_dvfs);
 	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_clock, show_clock);
-	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD(gpu_freq_table, show_gpu_freq_table,
-					  set_gpu_freq_table);
+	GPEX_UTILS_SYSFS_KOBJECT_FILE_ADD_RO(gpu_freq_table, show_gpu_freq_table);
 
 	return 0;
 }
