@@ -28,7 +28,7 @@
 #define _KBASE_CONFIG_DEFAULTS_H_
 
 /* Include mandatory definitions per platform */
-#include <mali_kbase_config_platform.h>
+#include "mali_kbase_config_platform.h"
 
 enum {
 	/* Use unrestricted Address ID width on the AXI bus. */
