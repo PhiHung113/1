@@ -41,6 +41,11 @@
 #include <linux/cache.h>
 #include <mali_exynos_kbase_entrypoint.h>
 
+void mali_exynos_update_firstjob_time(void);
+void mali_exynos_update_jobsubmit_time(void);
+void mali_exynos_amigo_interframe_hw_update_eof(void);
+void mali_exynos_amigo_interframe_hw_update(void);
+
 #if !MALI_USE_CSF
 /**
  * DOC: This file implements the logic behind software only jobs that are
