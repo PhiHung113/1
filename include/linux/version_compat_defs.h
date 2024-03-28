@@ -28,20 +28,4 @@
 typedef unsigned int __poll_t;
 #endif
 
-#ifndef EPOLLHUP
-#define EPOLLHUP POLLHUP
-#endif
-
-#ifndef EPOLLERR
-#define EPOLLERR POLLERR
-#endif
-
-#ifndef EPOLLIN
-#define EPOLLIN POLLIN
-#endif
-
-#ifndef EPOLLRDNORM
-#define EPOLLRDNORM POLLRDNORM
-#endif
-
 #endif /* _VERSION_COMPAT_DEFS_H_ */
