@@ -31,6 +31,7 @@ jobs:
           wget -q https://android.googlesource.com/platform/external/avb/+archive/refs/heads/master.tar.gz -O - | tar xzf - avbtool.py
           chmod +x avbtool.py
           sudo mv avbtool.py /usr/local/bin/avbtool
+          chmod +x build.sh
     - name: Kernel Build
       run: ./build.sh d2s
     - name: Upload Kernel Zip
