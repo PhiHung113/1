@@ -1,0 +1,40 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install mkbootimg
+      run: |
+          sudo apt-get install git-core gnupg flex bison build-essential zip curl zlib1g-dev libc6-dev-i386 libncurses5 x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig
+          wget -q https://android.googlesource.com/platform/system/tools/mkbootimg/+archive/refs/heads/master.tar.gz -O - | tar xzf - mkbootimg.py gki
+          chmod +x mkbootimg.py
+          sudo mv mkbootimg.py /usr/local/bin/mkbootimg
+          sudo mv gki $(python -c 'import site; print(site.getsitepackages()[0])')
+    - name: Install mkdtboimg
+      run: |
+          wget -q https://android.googlesource.com/platform/system/libufdt/+archive/refs/heads/master.tar.gz -O - | tar --strip-components 2 -xzf - utils/src/mkdtboimg.py
+          chmod +x mkdtboimg.py
+          sudo mv mkdtboimg.py /usr/local/bin/mkdtboimg
+    - name: Install avbtool
+      run: |
+          wget -q https://android.googlesource.com/platform/external/avb/+archive/refs/heads/master.tar.gz -O - | tar xzf - avbtool.py
+          chmod +x avbtool.py
+          sudo mv avbtool.py /usr/local/bin/avbtool
+    - name: Kernel Build
+      run: ./build.sh d2s
+    - name: Upload Kernel Zip
+      uses: actions/upload-artifact@v2
+      with:
+        name: ThunderStormsKernel
+        path: ./build/*.zip
