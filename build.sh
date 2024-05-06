@@ -2,7 +2,6 @@
 
 export MODEL=$1
 export piss=$2
-export BUILD_CROSS_COMPILE=$(pwd)/toolchains/aarch64-linux-android-4.9/bin/aarch64-linux-androidkernel-
 export BUILD_JOB_NUMBER=`grep -c ^processor /proc/cpuinfo`
 RDIR=$(pwd)
 
@@ -70,11 +69,9 @@ FUNC_BUILD_KERNEL()
     fi
 
     make -j$BUILD_JOB_NUMBER ARCH=arm64 \
-        CROSS_COMPILE=$BUILD_CROSS_COMPILE \
         $KERNEL_DEFCONFIG || exit -1
 
-    make -j$BUILD_JOB_NUMBER ARCH=arm64 \
-        CROSS_COMPILE=$BUILD_CROSS_COMPILE || exit -1
+    make -j$BUILD_JOB_NUMBER ARCH=arm64  || exit -1
 
     $RDIR/toolchains/mkdtimg cfg_create build/dtb_$SOC.img \
         $RDIR/toolchains/configs/exynos$SOC.cfg \
