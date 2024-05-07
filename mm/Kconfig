@@ -866,3 +866,15 @@ config FAULT_AROUND_4KB
 	default n
 	help
 	  Reduce fault around bytes to 4KB
+
+config VM_MAX_READAHEAD_KB
+	int "Default max readahead window size in Kilobytes"
+	default 4096
+	help
+	  This sets the VM_MAX_READAHEAD value to allow the readahead window
+	  to grow to a maximum size of configured. Increasing this value will
+	  benefit sequential read throughput.
+	
+	config VMSTAT_INTERVAL
+	int "Default interval in seconds to update vmstat"
+	default 30
